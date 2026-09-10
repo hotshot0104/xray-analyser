@@ -1,0 +1,2392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>MedTrust-XRay | Clinical Decision-Support &amp; Reliability Supervisor</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+  
+  <style>
+    /* ==========================================================================
+       ALLEL-INSPIRED MINIMALIST CLINICAL DESIGN SYSTEM
+       Pitch-black canvas (#050507), 1px micro-borders, clean typography,
+       crisp monochrome contrast with hyper-calibrated clinical accents.
+       ========================================================================== */
+    :root {
+      --font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+      /* Pitch-black & subtle neutral surfaces */
+      --color-bg-app: #050507;
+      --color-bg-surface: #0a0b0e;
+      --color-bg-card: #0e1015;
+      --color-bg-card-hover: #13161d;
+      --color-bg-inset: #040507;
+      --color-bg-subtle: rgba(255, 255, 255, 0.025);
+
+      /* Crisp hairline borders (1px) */
+      --color-border: rgba(255, 255, 255, 0.08);
+      --color-border-subtle: rgba(255, 255, 255, 0.04);
+      --color-border-focus: rgba(255, 255, 255, 0.22);
+
+      /* Typography scale */
+      --color-text-primary: #f4f4f6;
+      --color-text-secondary: #8e94a0;
+      --color-text-muted: #525866;
+      --color-text-dim: #323640;
+
+      /* High-contrast brand elements */
+      --color-cta-bg: #ffffff;
+      --color-cta-text: #050507;
+      --color-cta-hover: #e8e8ea;
+
+      /* Clinical Supervisor Status System */
+      --color-trust-pass-bg: rgba(16, 185, 129, 0.06);
+      --color-trust-pass-border: rgba(16, 185, 129, 0.35);
+      --color-trust-pass-text: #34d399;
+      --color-trust-pass-glow: rgba(52, 211, 153, 0.15);
+
+      --color-trust-fail-bg: rgba(239, 68, 68, 0.06);
+      --color-trust-fail-border: rgba(239, 68, 68, 0.4);
+      --color-trust-fail-text: #f87171;
+      --color-trust-fail-glow: rgba(248, 113, 113, 0.15);
+
+      --color-status-warn-bg: rgba(245, 158, 11, 0.08);
+      --color-status-warn-border: rgba(245, 158, 11, 0.3);
+      --color-status-warn-text: #fbbf24;
+
+      --color-status-online: #10b981;
+      --color-status-offline: #6b7280;
+
+      /* Geometry & Spacing */
+      --radius-xs: 3px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-bg-app);
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      letter-spacing: -0.01em;
+    }
+
+    .mono {
+      font-family: var(--font-family-mono);
+      letter-spacing: -0.03em;
+    }
+
+    /* Allel Top Navigation Bar */
+    header.workstation-header {
+      background-color: var(--color-bg-app);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0 var(--space-6);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      padding: 2px 8px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      border-radius: 9999px;
+    }
+
+    .badge-pill-tag .tag-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--color-text-muted);
+    }
+
+    .app-nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+      margin-left: var(--space-6);
+    }
+
+    .nav-link {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      color: #ffffff;
+    }
+
+    .header-status-area {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+
+    .status-indicator-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--color-status-offline);
+      transition: background-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .status-indicator-dot.online {
+      background-color: var(--color-status-online);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    /* Container Canvas - Full-width Clinical Workstation (No Excessive Margins) */
+    main.workstation-container {
+      max-width: 100%;
+      width: 100%;
+      margin: 0;
+      padding: var(--space-4) var(--space-6) var(--space-8);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      flex: 1;
+    }
+
+    /* Minimalist Clinical Card Unit */
+    .clinical-card {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .clinical-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .card-header-bar {
+      padding: 10px 16px;
+      background-color: rgba(255, 255, 255, 0.015);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .card-header-bar .header-tag {
+      font-size: 10px;
+      color: var(--color-text-muted);
+      font-family: var(--font-family-mono);
+    }
+
+    /* Clinical Case Meta Bar */
+    .case-meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background-color: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    .case-meta-items {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .case-meta-item strong {
+      color: var(--color-text-secondary);
+      font-weight: 500;
+    }
+
+    /* Banner */
+    .clinical-banner {
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .clinical-banner.visible {
+      display: flex;
+    }
+
+    .clinical-banner.warning {
+      background-color: var(--color-status-warn-bg);
+      border: 1px solid var(--color-status-warn-border);
+      color: var(--color-status-warn-text);
+    }
+
+    .clinical-banner.error {
+      background-color: var(--color-trust-fail-bg);
+      border: 1px solid var(--color-trust-fail-border);
+      color: var(--color-trust-fail-text);
+    }
+
+    /* Section 1: Modular Intake Grid */
+    .intake-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1px;
+      background-color: var(--color-border);
+    }
+
+    .intake-cell {
+      background-color: var(--color-bg-surface);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .dropzone-container {
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      background-color: rgba(255, 255, 255, 0.015);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .dropzone-container:hover, .dropzone-container.drag-over {
+      border-color: rgba(255, 255, 255, 0.4);
+      background-color: rgba(255, 255, 255, 0.04);
+    }
+
+    .dropzone-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-xs);
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary);
+      flex-shrink: 0;
+    }
+
+    .dropzone-text-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dropzone-primary {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    .dropzone-secondary {
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    .field-label {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .select-clinical {
+      width: 100%;
+      background-color: #0d0f14;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+      padding: 9px 12px;
+      font-size: 12px;
+      font-family: var(--font-family-base);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .select-clinical:focus {
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .scan-action-cluster {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: flex-end;
+    }
+
+    .selected-meta-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .selected-meta-badge .filename {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .selected-meta-badge .filesize {
+      font-size: 11px;
+      color: var(--color-text-muted);
+    }
+
+    /* Allel High-Contrast Crisp CTA Button */
+    .btn-cta-primary {
+      background-color: var(--color-cta-bg);
+      color: var(--color-cta-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 9px 18px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.15s ease, opacity 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-cta-primary:hover:not(:disabled) {
+      background-color: var(--color-cta-hover);
+    }
+
+    .btn-cta-primary:disabled {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--color-text-muted);
+      cursor: not-allowed;
+    }
+
+    .btn-subtle {
+      background-color: rgba(255, 255, 255, 0.03);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-subtle:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.07);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-subtle:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .btn-subtle.active {
+      background-color: #ffffff;
+      color: #050507;
+      border-color: #ffffff;
+    }
+
+    /* Segmented Pill Selector (Risk Policy) */
+    .segmented-pill-group {
+      display: inline-flex;
+      background-color: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--color-border);
+      border-radius: 9999px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .segmented-pill {
+      background: transparent;
+      border: none;
+      color: var(--color-text-muted);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .segmented-pill:hover {
+      color: var(--color-text-primary);
+    }
+
+    .segmented-pill.active {
+      background-color: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* Section 2: Trust Gatekeeper / Supervisor Banner */
+    .trust-gatekeeper-banner {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trust-gatekeeper-banner.empty-state {
+      padding: 18px 24px;
+      color: var(--color-text-muted);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-style: dashed;
+      background-color: rgba(255, 255, 255, 0.01);
+    }
+
+    .trust-gatekeeper-banner.status-trusted {
+      background-color: var(--color-trust-pass-bg);
+      border-color: var(--color-trust-pass-border);
+      box-shadow: 0 0 24px var(--color-trust-pass-glow);
+    }
+
+    .trust-gatekeeper-banner.status-untrusted {
+      background-color: var(--color-trust-fail-bg);
+      border-color: var(--color-trust-fail-border);
+      box-shadow: 0 0 24px var(--color-trust-fail-glow);
+    }
+
+    .gatekeeper-inner {
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .gatekeeper-flag-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .gatekeeper-sub-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    .gatekeeper-status-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-trusted .gatekeeper-status-title {
+      color: var(--color-trust-pass-text);
+    }
+
+    .status-untrusted .gatekeeper-status-title {
+      color: var(--color-trust-fail-text);
+    }
+
+    .gatekeeper-explanation {
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      padding-left: 24px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    .status-trusted .gatekeeper-explanation {
+      color: #d1fae5;
+    }
+
+    .status-untrusted .gatekeeper-explanation {
+      color: #fecaca;
+    }
+
+    .gatekeeper-score-box {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .gatekeeper-score-num {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .status-trusted .gatekeeper-score-num {
+      color: var(--color-trust-pass-text);
+    }
+
+    .status-untrusted .gatekeeper-score-num {
+      color: var(--color-trust-fail-text);
+    }
+
+    .gatekeeper-score-label {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    /* Section 3: Dual Viewport Inspection Deck */
+    .diagnostic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+    }
+
+    .viewport-panel {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Viewport PACS Micro-Toolbar */
+    .pacs-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 14px;
+      background-color: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--color-border);
+      font-size: 11px;
+    }
+
+    .pacs-control-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pacs-slider-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Minimalist Clinical Sliders */
+    .slider-clinical {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 70px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      outline: none;
+      transition: background 0.15s;
+    }
+
+    .slider-clinical::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffffff;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .slider-clinical::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    .image-stage {
+      background-color: var(--color-bg-inset);
+      height: clamp(460px, 48vh, 560px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .image-stage img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      user-select: none;
+      transition: filter 0.1s ease;
+    }
+
+    /* Composite Viewport for Grad-CAM Blend */
+    .composite-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .composite-layer {
+      position: absolute;
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    .composite-heatmap {
+      mix-blend-mode: screen;
+      opacity: 0.75;
+      transition: opacity 0.1s ease;
+    }
+
+    .image-empty-placeholder {
+      color: var(--color-text-muted);
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .image-empty-placeholder svg {
+      opacity: 0.4;
+    }
+
+    .telemetry-bar {
+      padding: 14px 18px;
+      background-color: var(--color-bg-surface);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .telemetry-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .telemetry-label {
+      font-size: 10px;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 500;
+    }
+
+    .telemetry-val {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-top: 2px;
+    }
+
+    /* Section 4 & 5: Side-by-Side Analysis Stages */
+    .analysis-stages-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: var(--space-5);
+    }
+
+    .primary-finding-strip {
+      padding: 14px 18px;
+      background-color: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .primary-finding-tag {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .primary-finding-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .pathology-table-wrap {
+      max-height: 440px;
+      overflow-y: auto;
+    }
+
+    .pathology-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .pathology-table th {
+      background-color: rgba(255, 255, 255, 0.015);
+      color: var(--color-text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--color-border);
+      font-weight: 500;
+    }
+
+    .pathology-table th.num-col, .pathology-table td.num-col {
+      text-align: right;
+    }
+
+    .pathology-table td {
+      padding: 7px 16px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      color: var(--color-text-primary);
+    }
+
+    .pathology-table tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .pathology-table tr.primary-row {
+      background-color: rgba(255, 255, 255, 0.05);
+      font-weight: 500;
+    }
+
+    .pathology-table tr.primary-row td {
+      color: #ffffff;
+    }
+
+    .prob-bar-track {
+      background-color: rgba(255, 255, 255, 0.06);
+      height: 4px;
+      border-radius: 9999px;
+      width: 100%;
+      min-width: 90px;
+      overflow: hidden;
+    }
+
+    .prob-bar-fill {
+      background-color: var(--color-text-muted);
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.35s ease;
+    }
+
+    .primary-row .prob-bar-fill {
+      background-color: #ffffff;
+    }
+
+    /* Stage 2 Modular Tiles */
+    .supervisor-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background-color: var(--color-border);
+      margin: 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .metric-brick {
+      background-color: var(--color-bg-surface);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 110px;
+      transition: background-color 0.15s ease;
+    }
+
+    .metric-brick:hover {
+      background-color: var(--color-bg-card-hover);
+    }
+
+    .metric-brick-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .metric-brick-title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.01em;
+    }
+
+    .metric-brick-value {
+      font-size: 26px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-top: 8px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .metric-brick-bar {
+      margin-top: 10px;
+      height: 3px;
+      background-color: rgba(255, 255, 255, 0.07);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .metric-brick-fill {
+      height: 100%;
+      background-color: #ffffff;
+      border-radius: 9999px;
+      transition: width 0.3s ease;
+    }
+
+    .metric-brick-sub {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      margin-top: 8px;
+    }
+
+    .supervisor-explanation-callout {
+      margin: 16px 16px 0;
+      padding: 12px 14px;
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Section 6: 5-Point Perturbation Stress-Test Suite */
+    .perturbation-deck {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background-color: var(--color-border);
+    }
+
+    .perturbation-cell {
+      background-color: var(--color-bg-surface);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: background-color 0.15s ease;
+    }
+
+    .perturbation-cell:hover {
+      background-color: var(--color-bg-card-hover);
+    }
+
+    .perturbation-thumb-box {
+      width: 100%;
+      height: 110px;
+      background-color: var(--color-bg-inset);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xs);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .perturbation-thumb-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .perturbation-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 2px;
+    }
+
+    .perturbation-desc {
+      font-size: 10px;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+
+    .perturbation-metric {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .perturbation-prob {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .delta-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 5px;
+      border-radius: var(--radius-xs);
+    }
+
+    .delta-badge.stable {
+      background-color: rgba(52, 211, 153, 0.1);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .delta-badge.unstable {
+      background-color: rgba(248, 113, 113, 0.1);
+      color: #f87171;
+      border: 1px solid rgba(248, 113, 113, 0.3);
+    }
+
+    /* Section 7: Multi-Model Consensus Breakdown */
+    .consensus-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background-color: var(--color-border);
+      margin: 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .consensus-card {
+      background-color: var(--color-bg-surface);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .consensus-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .consensus-model-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .consensus-prob {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    /* Bottom Audit Action Bar */
+    .audit-action-bar {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .audit-info {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .audit-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Spinner */
+    .spinner-disc {
+      width: 13px;
+      height: 13px;
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      border-top-color: #000000;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1080px) {
+      .intake-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+        background-color: transparent;
+      }
+      .intake-cell {
+        padding: 0;
+      }
+      .diagnostic-grid {
+        grid-template-columns: 1fr;
+      }
+      .analysis-stages-grid {
+        grid-template-columns: 1fr;
+      }
+      .perturbation-deck {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .consensus-grid {
+        grid-template-columns: 1fr;
+      }
+      .gatekeeper-inner {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .gatekeeper-explanation {
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-left: 0;
+        padding-top: 14px;
+      }
+      .gatekeeper-score-box {
+        align-items: flex-start;
+        text-align: left;
+      }
+    }
+
+    /* Print Stylesheet for Formal Clinical Report */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      header.workstation-header,
+      .audit-action-bar,
+      .pacs-toolbar,
+      .scan-action-cluster,
+      #dropzone,
+      .segmented-pill-group {
+        display: none !important;
+      }
+      main.workstation-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+      .clinical-card, .trust-gatekeeper-banner, .viewport-panel {
+        border: 1px solid #cccccc !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+      }
+      .gatekeeper-status-title, .metric-brick-value, .primary-finding-val {
+        color: #000000 !important;
+      }
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Allel Minimal Navigation Header -->
+  <header class="workstation-header">
+    <div class="brand-cluster">
+      <div aria-hidden="true" class="brand-mark">
+        <svg fill="none" height="22" stroke="currentColor" viewBox="0 0 24 24" width="22" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer Clinical Trust Shield -->
+          <path d="M12 2.2L4 5.8V11.5C4 16.5 7.4 21.1 12 22.3C16.6 21.1 20 16.5 20 11.5V5.8L12 2.2Z" stroke="#ffffff" stroke-linejoin="round" stroke-width="1.8"/>
+          <!-- Sub-layer Diagnostic X-Ray Angles -->
+          <path d="M8.2 8.2L15.8 15.8M15.8 8.2L8.2 15.8" stroke="rgba(255, 255, 255, 0.4)" stroke-linecap="round" stroke-width="1.4"/>
+          <!-- Primary Medical Cross -->
+          <path d="M12 7V17M7 12H17" stroke="#ffffff" stroke-linecap="round" stroke-width="2"/>
+          <!-- Supervisor Verification Emerald Core -->
+          <circle cx="12" cy="12" fill="#10b981" r="2.2"/>
+        </svg>
+      </div>
+      <h1 class="app-title">MedTrust-XRay</h1>
+    </div>
+  </header>
+
+  <!-- Main Workstation Canvas -->
+  <main class="workstation-container">
+
+
+    <!-- Clinical Warning / Offline Alert Banner -->
+    <div class="clinical-banner warning" id="systemNotification">
+      <span id="systemNotificationText">Connecting to diagnostic backend...</span>
+      <button class="btn-subtle" id="systemNotificationClose" style="padding: 2px 8px; font-size: 11px;">Dismiss</button>
+    </div>
+
+    <!-- 1. Scan Input & Intake Area -->
+    <section class="clinical-card" id="intake">
+      <div class="card-header-bar">
+        <span>1. Radiograph Acquisition &amp; Case Selection</span>
+        <span class="header-tag" id="acquisitionMeta">CHEST AP/PA • MULTIPART INTAKE</span>
+      </div>
+      <div class="intake-grid">
+        <!-- Drag and drop zone -->
+        <div class="intake-cell">
+          <label class="field-label">File Intake</label>
+          <div aria-label="Drop chest radiograph here or browse" class="dropzone-container" id="dropzone" role="button" tabindex="0">
+            <input accept="image/png, image/jpeg, image/jpg" id="fileInput" style="display: none;" type="file"/>
+            <div class="dropzone-icon-box">
+              <svg fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" x2="12" y1="3" y2="15"></line>
+              </svg>
+            </div>
+            <div class="dropzone-text-group">
+              <span class="dropzone-primary">Drop chest radiograph</span>
+              <span class="dropzone-secondary">or <strong style="color:#ffffff; text-decoration: underline;">browse files</strong> (PNG, JPG)</span>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Action / Metadata / Trigger -->
+        <div class="intake-cell">
+          <label class="field-label">Execution Pipeline</label>
+          <div class="scan-action-cluster">
+            <div class="selected-meta-badge hidden" id="selectedFileInfo">
+              <span class="filename" id="fileInfoName">radiograph.png</span>
+              <span class="filesize mono" id="fileInfoDetails">0.0 KB</span>
+            </div>
+            <button class="btn-cta-primary" disabled="" id="runAnalysisBtn">
+              <span class="spinner-disc hidden" id="btnSpinner"></span>
+              <span id="btnText">Run Clinical Diagnostic &amp; Trust Analysis</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Trust Gatekeeper (Independent Reliability Supervisor with Risk Policy Selector) -->
+    <section class="trust-gatekeeper-banner empty-state" id="trustGatekeeper">
+      <div id="gatekeeperEmptyContent" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+        <div style="display:flex; align-items:center; gap: 10px;">
+          <span class="badge-pill-tag">STANDBY</span>
+          <span>No X-ray analyzed yet. Upload or drop a chest X-ray to detect diseases and check if the AI can be trusted.</span>
+        </div>
+        <!-- Risk Sensitivity Selector -->
+        <div style="display:flex; align-items:center; gap: 8px;">
+          <span class="header-tag">Gating Policy:</span>
+          <div class="segmented-pill-group" id="policySelector">
+            <button class="segmented-pill" data-policy="icu" title="ICU Acuity (≥85% threshold)">ICU (85%)</button>
+            <button class="segmented-pill active" data-policy="standard" title="Standard Screening (≥70% threshold)">Standard (70%)</button>
+            <button class="segmented-pill" data-policy="screening" title="Triage Screening (≥55% threshold)">Triage (55%)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="gatekeeper-inner hidden" id="gatekeeperActiveContent" style="width:100%;">
+        <div class="gatekeeper-flag-container">
+          <div style="display:flex; align-items:center; gap: 10px;">
+            <span class="gatekeeper-sub-tag">INDEPENDENT SUPERVISOR GATEKEEPER</span>
+            <!-- Live Risk Policy Switcher -->
+            <div class="segmented-pill-group" id="activePolicySelector">
+              <button class="segmented-pill" data-policy="icu">ICU (85%)</button>
+              <button class="segmented-pill active" data-policy="standard">Standard (70%)</button>
+              <button class="segmented-pill" data-policy="screening">Triage (55%)</button>
+            </div>
+          </div>
+          <div class="gatekeeper-status-title" id="gatekeeperStatus">STATUS: AWAITING INFERENCE</div>
+        </div>
+        <div class="gatekeeper-explanation" id="gatekeeperRecommendation">
+          --
+        </div>
+        <div class="gatekeeper-score-box">
+          <div class="gatekeeper-score-num mono" id="gatekeeperScore">--%</div>
+          <div class="gatekeeper-score-label" id="gatekeeperScoreLabel">Supervisor Trust Score</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Diagnostic Workspace (Original X-Ray & Saliency / Attention Deck) -->
+    <section class="diagnostic-grid" id="workspace">
+      <!-- Left: Original Radiograph with Radiology PACS Controls -->
+      <div class="viewport-panel">
+        <div class="card-header-bar">
+          <span>ORIGINAL RADIOGRAPH (SOURCE INPUT)</span>
+          <span class="header-tag" id="radiographResolution">-- x --</span>
+        </div>
+
+        <!-- PACS Micro-Toolbar -->
+        <div class="pacs-toolbar">
+          <div class="pacs-control-group">
+            <button class="btn-subtle" id="btnInvertGrayscale" title="Invert Grayscale (Bones Black/White)">
+              <span class="mono">INV</span>
+            </button>
+            <div class="pacs-slider-item">
+              <span>Contrast</span>
+              <input type="range" id="sliderContrast" min="50" max="200" value="100" class="slider-clinical" />
+              <span class="mono" id="valContrast">100%</span>
+            </div>
+            <div class="pacs-slider-item">
+              <span>Brightness</span>
+              <input type="range" id="sliderBrightness" min="50" max="200" value="100" class="slider-clinical" />
+              <span class="mono" id="valBrightness">100%</span>
+            </div>
+          </div>
+          <button class="btn-subtle" id="btnResetFilters" title="Reset Display Adjustments">
+            <span>↺ Reset</span>
+          </button>
+        </div>
+
+        <div class="image-stage" id="originalImageStage">
+          <div class="image-empty-placeholder" id="originalPlaceholder">
+            <svg fill="none" height="34" stroke="currentColor" stroke-width="1.2" viewbox="0 0 24 24" width="34">
+              <rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <span>No radiograph loaded</span>
+          </div>
+          <img alt="Original Chest Radiograph" class="hidden" id="originalImgView"/>
+        </div>
+        <div class="telemetry-bar">
+          <div class="telemetry-item">
+            <span class="telemetry-label">Blur / Laplacian</span>
+            <span class="telemetry-val mono" id="metricBlur">--</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Noise Sigma</span>
+            <span class="telemetry-val mono" id="metricNoise">--</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">RMS Contrast</span>
+            <span class="telemetry-val mono" id="metricContrast">--</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Quality Score</span>
+            <span class="telemetry-val mono" id="metricQuality">--%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Grad-CAM / Anatomical Attention with Live Opacity Blend -->
+      <div class="viewport-panel">
+        <div class="card-header-bar">
+          <span>GRAD-CAM / ANATOMICAL ATTENTION</span>
+          <span class="header-tag" id="saliencyQualityTag">AWAITING INFERENCE</span>
+        </div>
+
+        <!-- Heatmap Opacity Controls -->
+        <div class="pacs-toolbar">
+          <div class="pacs-control-group">
+            <div class="pacs-slider-item">
+              <span>Heatmap Opacity</span>
+              <input type="range" id="sliderHeatmapOpacity" min="0" max="100" value="75" class="slider-clinical" />
+              <span class="mono" id="valHeatmapOpacity">75%</span>
+            </div>
+            <div class="pacs-slider-item" style="margin-left: 10px;">
+              <span class="header-tag" id="blendModeLabel">Composite Blend</span>
+            </div>
+          </div>
+          <div class="badge-pill-tag" id="xaiStabilityBadge">
+            XAI STABLE
+          </div>
+        </div>
+
+        <div class="image-stage" id="heatmapImageStage">
+          <div class="image-empty-placeholder" id="heatmapPlaceholder">
+            <svg fill="none" height="34" stroke="currentColor" stroke-width="1.2" viewbox="0 0 24 24" width="34">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" x2="12" y1="2" y2="22"></line>
+              <line x1="2" x2="22" y1="12" y2="12"></line>
+              <circle cx="12" cy="12" r="4"></circle>
+            </svg>
+            <span>Explainability heatmap generated on prediction</span>
+          </div>
+          <!-- Composite blend container -->
+          <div class="composite-stage hidden" id="compositeStage">
+            <img alt="Base Radiograph" class="composite-layer" id="blendBaseImgView" />
+            <img alt="Grad-CAM Saliency Visualization" class="composite-layer composite-heatmap" id="heatmapImgView" />
+          </div>
+        </div>
+        <div class="telemetry-bar">
+          <div class="telemetry-item" style="grid-column: span 2;">
+            <span class="telemetry-label">Attention Localization</span>
+            <span class="telemetry-val" id="telemetryLocQuality">--</span>
+          </div>
+          <div class="telemetry-item" style="grid-column: span 2;">
+            <span class="telemetry-label">XAI Heatmap Integrity</span>
+            <span class="telemetry-val mono" id="telemetryXaiStatus">Uncalculated</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 & 5. Stage 1 (Pathologies) & Stage 2 (Reliability Supervisor) -->
+    <section class="analysis-stages-grid" id="supervisor">
+      <!-- Stage 1: Pathology Findings -->
+      <div class="clinical-card">
+        <div class="card-header-bar">
+          <span>Stage 1 — Thoracic Pathology Predictions (14 Classes)</span>
+          <span class="header-tag">NOMINAL PROBABILITY</span>
+        </div>
+        <div class="primary-finding-strip">
+          <div class="primary-finding-tag">Primary Finding</div>
+          <div class="primary-finding-val mono" id="primaryFindingSummary">No prediction available</div>
+        </div>
+        <div class="pathology-table-wrap">
+          <table class="pathology-table" id="pathologyTable">
+            <thead>
+              <tr>
+                <th style="width: 32%;">Thoracic Pathology</th>
+                <th class="num-col" style="width: 20%;">Probability</th>
+                <th style="width: 48%;">Clinical Confidence</th>
+              </tr>
+            </thead>
+            <tbody id="pathologyTableBody">
+              <tr>
+                <td colspan="3" style="text-align:center; padding: 32px; color: var(--color-text-muted);">
+                  Run analysis to generate probability distribution across all 14 thoracic classes.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Stage 2: Reliability Supervisor -->
+      <div class="clinical-card" style="display: flex; flex-direction: column;">
+        <div class="card-header-bar">
+          <span>Stage 2 — Reliability Supervisor</span>
+          <span class="header-tag">STABILITY TELEMETRY</span>
+        </div>
+        <div class="supervisor-explanation-callout">
+          This supervisor tests whether the AI's answer is trustworthy, stable against noise, and agreed upon by multiple models before a doctor relies on it.
+        </div>
+        <div class="supervisor-card-grid">
+          <!-- Metric 1: Image Quality -->
+          <div class="metric-brick">
+            <div class="metric-brick-header">
+              <span class="metric-brick-title">Image Quality</span>
+            </div>
+            <div class="metric-brick-value mono" id="supImageQuality">--%</div>
+            <div class="metric-brick-bar"><div class="metric-brick-fill" id="barImageQuality" style="width: 0%;"></div></div>
+            <div class="metric-brick-sub" id="subImageQuality">Laplacian &amp; SNR compliance</div>
+          </div>
+          <!-- Metric 2: Perturbation Stability -->
+          <div class="metric-brick">
+            <div class="metric-brick-header">
+              <span class="metric-brick-title">Perturbation Stability</span>
+            </div>
+            <div class="metric-brick-value mono" id="supPerturbStability">--%</div>
+            <div class="metric-brick-bar"><div class="metric-brick-fill" id="barPerturbStability" style="width: 0%;"></div></div>
+            <div class="metric-brick-sub mono" id="supInstabilityStd">Instability SD: --</div>
+          </div>
+          <!-- Metric 3: Multi-Model Consensus -->
+          <div class="metric-brick">
+            <div class="metric-brick-header">
+              <span class="metric-brick-title">Multi-Model Consensus</span>
+            </div>
+            <div class="metric-brick-value mono" id="supModelAgreement">--%</div>
+            <div class="metric-brick-bar"><div class="metric-brick-fill" id="barModelAgreement" style="width: 0%;"></div></div>
+            <div class="metric-brick-sub">Cross-ensemble agreement</div>
+          </div>
+          <!-- Metric 4: Saliency XAI Stability -->
+          <div class="metric-brick">
+            <div class="metric-brick-header">
+              <span class="metric-brick-title">Grad-CAM Stability</span>
+            </div>
+            <div class="metric-brick-value mono" id="supSaliencyStability">--%</div>
+            <div class="metric-brick-bar"><div class="metric-brick-fill" id="barSaliencyStability" style="width: 0%;"></div></div>
+            <div class="metric-brick-sub">Gradient feature persistence</div>
+          </div>
+        </div>
+
+        <!-- Multi-Model Consensus Breakdown (Ensemble Inspector) -->
+        <div style="padding: 0 16px 14px;">
+          <div style="font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin-bottom: 6px;">
+            Cross-Architectural Model Breakdown (Primary Pathology)
+          </div>
+          <div class="consensus-grid" style="margin: 0;">
+            <div class="consensus-card">
+              <div class="consensus-card-header">
+                <span class="consensus-model-name">DenseNet121</span>
+                <span class="header-tag">Primary</span>
+              </div>
+              <div class="consensus-prob mono" id="consensusDenseNet">--%</div>
+            </div>
+            <div class="consensus-card">
+              <div class="consensus-card-header">
+                <span class="consensus-model-name">ResNet50</span>
+                <span class="header-tag">Cross-Check</span>
+              </div>
+              <div class="consensus-prob mono" id="consensusResNet">--%</div>
+            </div>
+            <div class="consensus-card">
+              <div class="consensus-card-header">
+                <span class="consensus-model-name">EfficientNet</span>
+                <span class="header-tag">Cross-Check</span>
+              </div>
+              <div class="consensus-prob mono" id="consensusEfficientNet">--%</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1;"></div>
+      </div>
+    </section>
+
+    <!-- 6. 5-Point Perturbation Stress-Test Suite -->
+    <section class="clinical-card" id="stress-suite">
+      <div class="card-header-bar">
+        <span>5-Point Adversarial Perturbation Stability Suite</span>
+        <span class="header-tag" id="perturbationSummaryTag">STRESS-TEST SENSITIVITY VERIFICATION</span>
+      </div>
+      <div class="perturbation-deck" id="perturbationDeck">
+        <div class="perturbation-cell">
+          <div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div>
+          <span class="perturbation-name">1. Baseline (Original)</span>
+          <span class="perturbation-desc">Reference Unperturbed</span>
+          <span class="perturbation-prob mono">--%</span>
+        </div>
+        <div class="perturbation-cell">
+          <div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div>
+          <span class="perturbation-name">2. Contrast (+12%)</span>
+          <span class="perturbation-desc">Dynamic Range Shift</span>
+          <span class="perturbation-prob mono">--%</span>
+        </div>
+        <div class="perturbation-cell">
+          <div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div>
+          <span class="perturbation-name">3. Noise (σ=10)</span>
+          <span class="perturbation-desc">High-Freq Sensor Artifact</span>
+          <span class="perturbation-prob mono">--%</span>
+        </div>
+        <div class="perturbation-cell">
+          <div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div>
+          <span class="perturbation-name">4. Brightness (-10%)</span>
+          <span class="perturbation-desc">Sub-Optimal Penetration</span>
+          <span class="perturbation-prob mono">--%</span>
+        </div>
+        <div class="perturbation-cell">
+          <div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div>
+          <span class="perturbation-name">5. Shift (+6px)</span>
+          <span class="perturbation-desc">Patient Anatomical Shift</span>
+          <span class="perturbation-prob mono">--%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Bottom Audit & Actions -->
+    <section class="audit-action-bar">
+      <div class="audit-info">
+        <span class="badge-pill-tag">CLINICAL NOTICE</span>
+        <span>Decision-support only. Not autonomous diagnosis. Governed by MedTrust-XRay Reliability Core.</span>
+      </div>
+      <div class="audit-buttons">
+        <button class="btn-subtle" id="printReportBtn" disabled="">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Print / Save Clinical Report (PDF)
+        </button>
+        <button class="btn-subtle" disabled="" id="downloadReportBtn">
+          Download Audit Log (.txt)
+        </button>
+        <button class="btn-subtle" id="newScanBtn">
+          New Scan / Reset
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Application Logic & Backend Integration -->
+  <script>
+    /**
+     * MedTrust-XRay Advanced Clinical Workstation
+     * Features:
+     * - Multi-policy Risk Gating (ICU 85%, Standard 70%, Triage 55%)
+     * - PACS Display Adjustments (Invert Grayscale, Brightness, Contrast)
+     * - Grad-CAM Opacity & Composite Blending
+     * - 5-Point Live Perturbation Gallery
+     * - Multi-Model Architectural Consensus Breakdown
+     * - Clinical Report Print & Export
+     */
+    const BACKEND_BASE = window.location.origin.includes('8000') ? window.location.origin : 'http://127.0.0.1:8000';
+
+    // State container
+    const AppState = {
+      isBackendConnected: false,
+      selectedFile: null,
+      selectedFilename: '',
+      previewUrl: null,
+      inferenceInProgress: false,
+      lastPredictionData: null,
+      requestIdCounter: 0,
+      activeRequestId: 0,
+      // Clinical Policy: 'icu' (0.85), 'standard' (0.70), 'screening' (0.55)
+      currentPolicy: 'standard',
+      policyThresholds: {
+        icu: 0.85,
+        standard: 0.70,
+        screening: 0.55
+      },
+      // PACS Display Settings
+      filterInverted: false,
+      filterContrast: 100,
+      filterBrightness: 100,
+      heatmapOpacity: 75
+    };
+
+    // DOM Elements
+    const elements = {
+      backendStatusPill: document.getElementById('backendStatusPill'),
+      backendDot: document.getElementById('backendDot'),
+      backendText: document.getElementById('backendText'),
+      systemNotification: document.getElementById('systemNotification'),
+      systemNotificationText: document.getElementById('systemNotificationText'),
+      systemNotificationClose: document.getElementById('systemNotificationClose'),
+      dropzone: document.getElementById('dropzone'),
+      fileInput: document.getElementById('fileInput'),
+      sampleSelector: document.getElementById('sampleSelector'),
+      selectedFileInfo: document.getElementById('selectedFileInfo'),
+      fileInfoName: document.getElementById('fileInfoName'),
+      fileInfoDetails: document.getElementById('fileInfoDetails'),
+      runAnalysisBtn: document.getElementById('runAnalysisBtn'),
+      btnSpinner: document.getElementById('btnSpinner'),
+      btnText: document.getElementById('btnText'),
+      trustGatekeeper: document.getElementById('trustGatekeeper'),
+      gatekeeperEmptyContent: document.getElementById('gatekeeperEmptyContent'),
+      gatekeeperActiveContent: document.getElementById('gatekeeperActiveContent'),
+      gatekeeperStatus: document.getElementById('gatekeeperStatus'),
+      gatekeeperRecommendation: document.getElementById('gatekeeperRecommendation'),
+      gatekeeperScore: document.getElementById('gatekeeperScore'),
+      gatekeeperScoreLabel: document.getElementById('gatekeeperScoreLabel'),
+      radiographResolution: document.getElementById('radiographResolution'),
+      originalPlaceholder: document.getElementById('originalPlaceholder'),
+      originalImgView: document.getElementById('originalImgView'),
+      metricBlur: document.getElementById('metricBlur'),
+      metricNoise: document.getElementById('metricNoise'),
+      metricContrast: document.getElementById('metricContrast'),
+      metricQuality: document.getElementById('metricQuality'),
+      heatmapPlaceholder: document.getElementById('heatmapPlaceholder'),
+      compositeStage: document.getElementById('compositeStage'),
+      blendBaseImgView: document.getElementById('blendBaseImgView'),
+      heatmapImgView: document.getElementById('heatmapImgView'),
+      saliencyQualityTag: document.getElementById('saliencyQualityTag'),
+      telemetryLocQuality: document.getElementById('telemetryLocQuality'),
+      telemetryXaiStatus: document.getElementById('telemetryXaiStatus'),
+      xaiStabilityBadge: document.getElementById('xaiStabilityBadge'),
+      primaryFindingSummary: document.getElementById('primaryFindingSummary'),
+      pathologyTableBody: document.getElementById('pathologyTableBody'),
+      supImageQuality: document.getElementById('supImageQuality'),
+      barImageQuality: document.getElementById('barImageQuality'),
+      supPerturbStability: document.getElementById('supPerturbStability'),
+      barPerturbStability: document.getElementById('barPerturbStability'),
+      supInstabilityStd: document.getElementById('supInstabilityStd'),
+      supModelAgreement: document.getElementById('supModelAgreement'),
+      barModelAgreement: document.getElementById('barModelAgreement'),
+      supSaliencyStability: document.getElementById('supSaliencyStability'),
+      barSaliencyStability: document.getElementById('barSaliencyStability'),
+      consensusDenseNet: document.getElementById('consensusDenseNet'),
+      consensusResNet: document.getElementById('consensusResNet'),
+      consensusEfficientNet: document.getElementById('consensusEfficientNet'),
+      perturbationDeck: document.getElementById('perturbationDeck'),
+      btnInvertGrayscale: document.getElementById('btnInvertGrayscale'),
+      sliderContrast: document.getElementById('sliderContrast'),
+      valContrast: document.getElementById('valContrast'),
+      sliderBrightness: document.getElementById('sliderBrightness'),
+      valBrightness: document.getElementById('valBrightness'),
+      btnResetFilters: document.getElementById('btnResetFilters'),
+      sliderHeatmapOpacity: document.getElementById('sliderHeatmapOpacity'),
+      valHeatmapOpacity: document.getElementById('valHeatmapOpacity'),
+      downloadReportBtn: document.getElementById('downloadReportBtn'),
+      printReportBtn: document.getElementById('printReportBtn'),
+      newScanBtn: document.getElementById('newScanBtn')
+    };
+
+    /* ==========================================================================
+       ISOLATED API SERVICE LAYER
+       ========================================================================== */
+    const ApiService = {
+      async checkHealth() {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3500);
+          const res = await fetch(`${BACKEND_BASE}/health`, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          return res.ok;
+        } catch (err) {
+          return false;
+        }
+      },
+
+      async fetchSamples() {
+        const res = await fetch(`${BACKEND_BASE}/samples`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      },
+
+      async fetchSampleImage(filename) {
+        const res = await fetch(`${BACKEND_BASE}/samples/${filename}`);
+        if (!res.ok) {
+          const altRes = await fetch(`${BACKEND_BASE}/static/${filename}`);
+          if (!altRes.ok) throw new Error(`Unable to load sample ${filename}`);
+          return await altRes.blob();
+        }
+        return await res.blob();
+      },
+
+      async predict(file, filename) {
+        const formData = new FormData();
+        formData.append('file', file, filename);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+        const res = await fetch(`${BACKEND_BASE}/predict`, {
+          method: 'POST',
+          body: formData,
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          const errText = await res.text().catch(() => '');
+          throw new Error(`Inference request failed (HTTP ${res.status})${errText ? ': ' + errText : ''}`);
+        }
+        return await res.json();
+      }
+    };
+
+    /* ==========================================================================
+       HEALTH POLLER & CONNECTION STATUS
+       ========================================================================== */
+    async function updateBackendStatus() {
+      const isOnline = await ApiService.checkHealth();
+      AppState.isBackendConnected = isOnline;
+
+      if (isOnline) {
+        if (elements.backendDot) elements.backendDot.classList.add('online');
+        if (elements.backendText) elements.backendText.textContent = 'Backend ● Connected';
+        if (elements.backendStatusPill) elements.backendStatusPill.setAttribute('title', `Connected to ${BACKEND_BASE}`);
+        if (elements.systemNotificationText && (elements.systemNotificationText.textContent.includes('Unable to connect') ||
+            elements.systemNotificationText.textContent.includes('Connecting to diagnostic backend'))) {
+          hideNotification();
+        }
+      } else {
+        if (elements.backendDot) elements.backendDot.classList.remove('online');
+        if (elements.backendText) elements.backendText.textContent = 'Backend ● Offline';
+        if (elements.backendStatusPill) elements.backendStatusPill.setAttribute('title', `Offline - verify ${BACKEND_BASE}`);
+        showNotification(
+          `Unable to connect to MedTrust-XRay backend. Ensure server is active at ${BACKEND_BASE}.`,
+          'error'
+        );
+      }
+    }
+
+    setInterval(updateBackendStatus, 5000);
+    updateBackendStatus();
+
+    // Populate preset dropdown
+    async function loadSamplesList() {
+      try {
+        const resData = await ApiService.fetchSamples();
+        const samples = Array.isArray(resData) ? resData : (resData?.samples || []);
+        if (Array.isArray(samples) && samples.length > 0 && elements.sampleSelector) {
+          elements.sampleSelector.innerHTML = '<option value="">-- Select sample preset --</option>';
+          samples.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s;
+            elements.sampleSelector.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.warn('Samples list unavailable from backend:', err.message);
+      }
+    }
+    loadSamplesList();
+
+    /* ==========================================================================
+       USER NOTIFICATIONS
+       ========================================================================== */
+    function showNotification(message, type = 'warning') {
+      elements.systemNotificationText.textContent = message;
+      elements.systemNotification.className = `clinical-banner visible ${type}`;
+    }
+
+    function hideNotification() {
+      elements.systemNotification.className = 'clinical-banner';
+    }
+
+    elements.systemNotificationClose.addEventListener('click', hideNotification);
+
+    /* ==========================================================================
+       RADIOLOGY PACS DISPLAY CONTROLS
+       ========================================================================== */
+    function applyRadiographFilters() {
+      const filterStr = `contrast(${AppState.filterContrast}%) brightness(${AppState.filterBrightness}%) ${AppState.filterInverted ? 'invert(1)' : 'invert(0)'}`;
+      elements.originalImgView.style.filter = filterStr;
+      elements.blendBaseImgView.style.filter = filterStr;
+    }
+
+    elements.btnInvertGrayscale.addEventListener('click', () => {
+      AppState.filterInverted = !AppState.filterInverted;
+      elements.btnInvertGrayscale.classList.toggle('active', AppState.filterInverted);
+      applyRadiographFilters();
+    });
+
+    elements.sliderContrast.addEventListener('input', (e) => {
+      AppState.filterContrast = e.target.value;
+      elements.valContrast.textContent = `${AppState.filterContrast}%`;
+      applyRadiographFilters();
+    });
+
+    elements.sliderBrightness.addEventListener('input', (e) => {
+      AppState.filterBrightness = e.target.value;
+      elements.valBrightness.textContent = `${AppState.filterBrightness}%`;
+      applyRadiographFilters();
+    });
+
+    elements.btnResetFilters.addEventListener('click', () => {
+      AppState.filterInverted = false;
+      AppState.filterContrast = 100;
+      AppState.filterBrightness = 100;
+      elements.btnInvertGrayscale.classList.remove('active');
+      elements.sliderContrast.value = 100;
+      elements.valContrast.textContent = '100%';
+      elements.sliderBrightness.value = 100;
+      elements.valBrightness.textContent = '100%';
+      applyRadiographFilters();
+    });
+
+    // Grad-CAM Opacity Slider
+    elements.sliderHeatmapOpacity.addEventListener('input', (e) => {
+      AppState.heatmapOpacity = e.target.value;
+      elements.valHeatmapOpacity.textContent = `${AppState.heatmapOpacity}%`;
+      elements.heatmapImgView.style.opacity = AppState.heatmapOpacity / 100;
+    });
+
+    /* ==========================================================================
+       RISK SENSITIVITY POLICY SELECTOR
+       ========================================================================== */
+    function setRiskPolicy(policyKey) {
+      if (!AppState.policyThresholds[policyKey]) return;
+      AppState.currentPolicy = policyKey;
+
+      // Update active pills across both UI selectors
+      document.querySelectorAll('.segmented-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-policy') === policyKey);
+      });
+
+      // Recalculate Supervisor Gatekeeper if prediction is currently loaded
+      if (AppState.lastPredictionData) {
+        updateSupervisorGatekeeper();
+      }
+    }
+
+    document.querySelectorAll('.segmented-pill-group').forEach(group => {
+      group.addEventListener('click', (e) => {
+        const btn = e.target.closest('.segmented-pill');
+        if (btn) {
+          const policy = btn.getAttribute('data-policy');
+          setRiskPolicy(policy);
+        }
+      });
+    });
+
+    function updateSupervisorGatekeeper() {
+      const data = AppState.lastPredictionData;
+      if (!data) return;
+
+      const sup = data.trust_supervisor || {};
+      const threshold = AppState.policyThresholds[AppState.currentPolicy];
+      const trustScore = sup.trust_score || 0;
+      const isTrusted = trustScore >= threshold;
+
+      elements.trustGatekeeper.className = `trust-gatekeeper-banner ${isTrusted ? 'status-trusted' : 'status-untrusted'}`;
+
+      const policyLabels = {
+        icu: 'Strict / ICU Mode (≥85%)',
+        standard: 'Standard Mode (≥70%)',
+        screening: 'Triage Mode (≥55%)'
+      };
+
+      if (isTrusted) {
+        elements.gatekeeperStatus.textContent = 'STATUS: VERIFIED RELIABLE';
+        elements.gatekeeperRecommendation.innerHTML = `
+          <strong>Safe &amp; Reliable (${policyLabels[AppState.currentPolicy]})</strong>: The X-ray is clear, our models agree on the diagnosis, and the AI is focusing on the correct lung area. Safe for clinical assistive review.
+        `;
+      } else {
+        elements.gatekeeperStatus.innerHTML = 'STATUS: &#x26A0; DO NOT TRUST';
+        elements.gatekeeperRecommendation.innerHTML = `
+          <strong>Warning — Do Not Trust (${policyLabels[AppState.currentPolicy]})</strong>: The AI prediction is unreliable. The scan may have artifacts/noise, our AI models disagree, or the AI is looking at the wrong spot. <em>A doctor must review this X-ray manually.</em>
+        `;
+      }
+
+      elements.gatekeeperScore.textContent = `${Math.round(trustScore * 100)}%`;
+      elements.gatekeeperScoreLabel.textContent = `Score (Threshold: ${Math.round(threshold * 100)}%)`;
+    }
+
+    /* ==========================================================================
+       FILE INTAKE & PRESETS HANDLING
+       ========================================================================== */
+    function handleFileSelection(file, filename) {
+      if (!file) return;
+
+      if (!file.type.match(/image\/(png|jpeg|jpg)/) && !filename.match(/\.(png|jpe?g)$/i)) {
+        showNotification('Invalid file type. Only PNG and JPEG radiographs are supported.', 'warning');
+        return;
+      }
+
+      if (AppState.previewUrl) {
+        URL.revokeObjectURL(AppState.previewUrl);
+        AppState.previewUrl = null;
+      }
+
+      AppState.selectedFile = file;
+      AppState.selectedFilename = filename || file.name || 'radiograph.png';
+      AppState.previewUrl = URL.createObjectURL(file);
+
+      elements.fileInfoName.textContent = AppState.selectedFilename;
+      elements.fileInfoDetails.textContent = formatBytes(file.size);
+      elements.selectedFileInfo.classList.remove('hidden');
+
+      elements.originalImgView.src = AppState.previewUrl;
+      elements.originalImgView.classList.remove('hidden');
+      elements.originalPlaceholder.classList.add('hidden');
+
+      elements.blendBaseImgView.src = AppState.previewUrl;
+
+      elements.originalImgView.onload = () => {
+        elements.radiographResolution.textContent = `${elements.originalImgView.naturalWidth} x ${elements.originalImgView.naturalHeight}`;
+      };
+
+      resetInferenceResultsOnly();
+      elements.runAnalysisBtn.disabled = false;
+      hideNotification();
+    }
+
+    elements.dropzone.addEventListener('click', () => elements.fileInput.click());
+    elements.fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        if (elements.sampleSelector) elements.sampleSelector.value = '';
+        handleFileSelection(file, file.name);
+      }
+    });
+
+    ['dragenter', 'dragover'].forEach(name => {
+      elements.dropzone.addEventListener(name, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        elements.dropzone.classList.add('drag-over');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(name => {
+      elements.dropzone.addEventListener(name, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        elements.dropzone.classList.remove('drag-over');
+      });
+    });
+
+    elements.dropzone.addEventListener('drop', (e) => {
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        if (elements.sampleSelector) elements.sampleSelector.value = '';
+        handleFileSelection(file, file.name);
+      }
+    });
+
+    if (elements.sampleSelector) {
+      elements.sampleSelector.addEventListener('change', async (e) => {
+        const sampleName = e.target.value;
+        if (!sampleName) return;
+
+        try {
+          elements.runAnalysisBtn.disabled = true;
+          elements.btnText.textContent = 'Fetching preset…';
+          
+          const blob = await ApiService.fetchSampleImage(sampleName);
+          handleFileSelection(blob, sampleName);
+          elements.btnText.textContent = 'Run Clinical Diagnostic & Trust Analysis';
+          elements.runAnalysisBtn.disabled = false;
+        } catch (err) {
+          elements.btnText.textContent = 'Run Clinical Diagnostic & Trust Analysis';
+          showNotification(`Failed to load preset '${sampleName}' from backend.`, 'error');
+        }
+      });
+    }
+
+    /* ==========================================================================
+       INFERENCE EXECUTION & TRUST GATEKEEPER
+       ========================================================================== */
+    elements.runAnalysisBtn.addEventListener('click', async () => {
+      if (!AppState.selectedFile || AppState.inferenceInProgress) return;
+
+      const currentReqId = ++AppState.requestIdCounter;
+      AppState.activeRequestId = currentReqId;
+      AppState.inferenceInProgress = true;
+
+      elements.runAnalysisBtn.disabled = true;
+      elements.btnSpinner.classList.remove('hidden');
+      elements.btnText.textContent = 'Analyzing radiograph & supervisor…';
+
+      try {
+        const result = await ApiService.predict(AppState.selectedFile, AppState.selectedFilename);
+
+        if (AppState.activeRequestId !== currentReqId) {
+          console.warn('Ignoring stale prediction response from prior scan');
+          return;
+        }
+
+        if (!result || result.success === false) {
+          throw new Error(result?.error || 'Diagnostic model returned unsuccessful status');
+        }
+
+        AppState.lastPredictionData = result;
+        renderClinicalResults(result);
+
+      } catch (err) {
+        if (AppState.activeRequestId === currentReqId) {
+          showNotification(`Analysis failed: ${err.message}. Ensure backend is responsive.`, 'error');
+        }
+      } finally {
+        if (AppState.activeRequestId === currentReqId) {
+          AppState.inferenceInProgress = false;
+          elements.btnSpinner.classList.add('hidden');
+          elements.btnText.textContent = 'Run Clinical Diagnostic & Trust Analysis';
+          elements.runAnalysisBtn.disabled = false;
+        }
+      }
+    });
+
+    /* ==========================================================================
+       RESULTS RENDERING (CLINICAL SPECIFICATION)
+       ========================================================================== */
+    function renderClinicalResults(data) {
+      // 1. Render Trust Gatekeeper with Policy Check
+      elements.gatekeeperEmptyContent.classList.add('hidden');
+      elements.gatekeeperActiveContent.classList.remove('hidden');
+      updateSupervisorGatekeeper();
+
+      // 2. Render Telemetry under original X-ray
+      const rel = data.reliability || {};
+      elements.metricBlur.textContent = rel.blur_metric !== undefined ? Number(rel.blur_metric).toFixed(2) : '--';
+      elements.metricNoise.textContent = rel.noise_sigma !== undefined ? Number(rel.noise_sigma).toFixed(2) : '--';
+      elements.metricContrast.textContent = rel.contrast_metric !== undefined ? Number(rel.contrast_metric).toFixed(2) : '--';
+      elements.metricQuality.textContent = rel.image_quality_score !== undefined ? `${Math.round(rel.image_quality_score * 100)}%` : '--%';
+
+      // 3. Render Explainability / Grad-CAM Heatmap (Composite Opacity Blend)
+      if (data.raw_heatmap_base64 || data.xai_heatmap_base64) {
+        // Use raw heatmap on top of the base radiograph for customizable opacity
+        elements.heatmapImgView.src = data.raw_heatmap_base64 || data.xai_heatmap_base64;
+        elements.compositeStage.classList.remove('hidden');
+        elements.heatmapPlaceholder.classList.add('hidden');
+        elements.saliencyQualityTag.textContent = 'GRAD-CAM COMPOSITE MAP';
+
+        const saliencyScore = rel.saliency_xai_stability || 0;
+        const locLabel = saliencyScore >= 0.70 ? 'Focal / Anatomical Focus' : 'Scattered / Artifact Focus';
+        elements.telemetryLocQuality.textContent = locLabel;
+        elements.telemetryXaiStatus.textContent = `Stability: ${Math.round(saliencyScore * 100)}%`;
+        
+        elements.xaiStabilityBadge.textContent = saliencyScore >= 0.70 ? 'XAI STABLE' : 'XAI UNSTABLE';
+        elements.xaiStabilityBadge.style.color = saliencyScore >= 0.70 ? 'var(--color-trust-pass-text)' : 'var(--color-trust-fail-text)';
+      } else {
+        elements.compositeStage.classList.add('hidden');
+        elements.heatmapPlaceholder.classList.remove('hidden');
+        elements.saliencyQualityTag.textContent = 'HEATMAP UNAVAILABLE';
+      }
+
+      // 4. Render Stage 1: Pathology Findings (14 classes sorted descending)
+      const pathologies = data.pathologies || {};
+      const sortedEntries = Object.entries(pathologies).sort((a, b) => b[1] - a[1]);
+
+      const primary = data.primary_finding || {};
+      elements.primaryFindingSummary.textContent = primary.disease 
+        ? `${primary.disease} — ${primary.nominal_percentage || (Math.round(primary.nominal_probability * 100) + '%')}`
+        : 'None detected';
+
+      elements.pathologyTableBody.innerHTML = '';
+
+      sortedEntries.forEach(([name, prob]) => {
+        const tr = document.createElement('tr');
+        const isPrimary = (primary.disease && primary.disease.toLowerCase() === name.toLowerCase());
+        if (isPrimary) tr.classList.add('primary-row');
+
+        const pct = (prob * 100).toFixed(1);
+        tr.innerHTML = `
+          <td>${name}</td>
+          <td class="num-col mono">${pct}%</td>
+          <td>
+            <div class="prob-bar-track">
+              <div class="prob-bar-fill" style="width: ${pct}%;"></div>
+            </div>
+          </td>
+        `;
+        elements.pathologyTableBody.appendChild(tr);
+      });
+
+      // 5. Render Stage 2: Reliability Supervisor Metrics
+      const imgScorePct = Math.round((rel.image_quality_score || 0) * 100);
+      elements.supImageQuality.textContent = `${imgScorePct}%`;
+      elements.barImageQuality.style.width = `${imgScorePct}%`;
+
+      const pertScorePct = Math.round((rel.perturbation_stability_score || 0) * 100);
+      elements.supPerturbStability.textContent = `${pertScorePct}%`;
+      elements.barPerturbStability.style.width = `${pertScorePct}%`;
+      elements.supInstabilityStd.textContent = `Instability SD: ${rel.instability_std !== undefined ? Number(rel.instability_std).toFixed(4) : '--'}`;
+
+      const modelScorePct = Math.round((rel.model_agreement_score || 0) * 100);
+      elements.supModelAgreement.textContent = `${modelScorePct}%`;
+      elements.barModelAgreement.style.width = `${modelScorePct}%`;
+
+      const salScorePct = Math.round((rel.saliency_xai_stability || 0) * 100);
+      elements.supSaliencyStability.textContent = `${salScorePct}%`;
+      elements.barSaliencyStability.style.width = `${salScorePct}%`;
+
+      // 6. Render Multi-Model Consensus Breakdown
+      const mb = data.model_breakdown || {};
+      const pScores = mb.primary_disease_scores || {};
+      elements.consensusDenseNet.textContent = pScores.densenet !== undefined ? `${Math.round(pScores.densenet * 100)}%` : '--%';
+      elements.consensusResNet.textContent = pScores.resnet !== undefined ? `${Math.round(pScores.resnet * 100)}%` : '--%';
+      elements.consensusEfficientNet.textContent = pScores.efficientnet !== undefined ? `${Math.round(pScores.efficientnet * 100)}%` : '--%';
+
+      // 7. Render 5-Point Perturbation Stress Suite
+      const perts = data.perturbations || [];
+      if (perts.length > 0) {
+        elements.perturbationDeck.innerHTML = '';
+        perts.forEach(p => {
+          const isStable = Math.abs(p.delta || 0) < 0.15;
+          const cell = document.createElement('div');
+          cell.className = 'perturbation-cell';
+          cell.innerHTML = `
+            <div class="perturbation-thumb-box">
+              <img src="${p.thumbnail_base64}" alt="${p.name}" />
+            </div>
+            <span class="perturbation-name">${p.name}</span>
+            <span class="perturbation-desc">${p.description}</span>
+            <div class="perturbation-metric">
+              <span class="perturbation-prob mono">${Math.round(p.disease_probability * 100)}%</span>
+              <span class="delta-badge mono ${isStable ? 'stable' : 'unstable'}">${p.delta_percentage}</span>
+            </div>
+          `;
+          elements.perturbationDeck.appendChild(cell);
+        });
+      }
+
+      elements.downloadReportBtn.disabled = false;
+      elements.printReportBtn.disabled = false;
+    }
+
+    /* ==========================================================================
+       RESET & CLEAR LIFECYCLE
+       ========================================================================== */
+    function resetInferenceResultsOnly() {
+      AppState.lastPredictionData = null;
+      elements.trustGatekeeper.className = 'trust-gatekeeper-banner empty-state';
+      elements.gatekeeperEmptyContent.classList.remove('hidden');
+      elements.gatekeeperActiveContent.classList.add('hidden');
+
+      elements.metricBlur.textContent = '--';
+      elements.metricNoise.textContent = '--';
+      elements.metricContrast.textContent = '--';
+      elements.metricQuality.textContent = '--%';
+
+      elements.compositeStage.classList.add('hidden');
+      elements.heatmapImgView.src = '';
+      elements.heatmapPlaceholder.classList.remove('hidden');
+      elements.saliencyQualityTag.textContent = 'AWAITING INFERENCE';
+      elements.telemetryLocQuality.textContent = '--';
+      elements.telemetryXaiStatus.textContent = 'Uncalculated';
+
+      elements.primaryFindingSummary.textContent = 'No prediction available';
+      elements.pathologyTableBody.innerHTML = `
+        <tr>
+          <td colspan="3" style="text-align:center; padding: 32px; color: var(--color-text-muted);">
+            Run analysis to generate probability distribution across all 14 thoracic classes.
+          </td>
+        </tr>
+      `;
+
+      elements.supImageQuality.textContent = '--%';
+      elements.barImageQuality.style.width = '0%';
+      elements.supPerturbStability.textContent = '--%';
+      elements.barPerturbStability.style.width = '0%';
+      elements.supInstabilityStd.textContent = 'Instability SD: --';
+      elements.supModelAgreement.textContent = '--%';
+      elements.barModelAgreement.style.width = '0%';
+      elements.supSaliencyStability.textContent = '--%';
+      elements.barSaliencyStability.style.width = '0%';
+
+      elements.consensusDenseNet.textContent = '--%';
+      elements.consensusResNet.textContent = '--%';
+      elements.consensusEfficientNet.textContent = '--%';
+
+      elements.perturbationDeck.innerHTML = `
+        <div class="perturbation-cell"><div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div><span class="perturbation-name">1. Baseline (Original)</span><span class="perturbation-desc">Reference Unperturbed</span><span class="perturbation-prob mono">--%</span></div>
+        <div class="perturbation-cell"><div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div><span class="perturbation-name">2. Contrast (+12%)</span><span class="perturbation-desc">Dynamic Range Shift</span><span class="perturbation-prob mono">--%</span></div>
+        <div class="perturbation-cell"><div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div><span class="perturbation-name">3. Noise (σ=10)</span><span class="perturbation-desc">High-Freq Sensor Artifact</span><span class="perturbation-prob mono">--%</span></div>
+        <div class="perturbation-cell"><div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div><span class="perturbation-name">4. Brightness (-10%)</span><span class="perturbation-desc">Sub-Optimal Penetration</span><span class="perturbation-prob mono">--%</span></div>
+        <div class="perturbation-cell"><div class="perturbation-thumb-box"><span style="color:var(--color-text-muted); font-size:11px;">Awaiting Scan</span></div><span class="perturbation-name">5. Shift (+6px)</span><span class="perturbation-desc">Patient Anatomical Shift</span><span class="perturbation-prob mono">--%</span></div>
+      `;
+
+      elements.downloadReportBtn.disabled = true;
+      elements.printReportBtn.disabled = true;
+    }
+
+    function resetComplete() {
+      AppState.activeRequestId = ++AppState.requestIdCounter;
+      AppState.inferenceInProgress = false;
+
+      if (AppState.previewUrl) {
+        URL.revokeObjectURL(AppState.previewUrl);
+        AppState.previewUrl = null;
+      }
+
+      AppState.selectedFile = null;
+      AppState.selectedFilename = '';
+
+      elements.fileInput.value = '';
+      if (elements.sampleSelector) elements.sampleSelector.value = '';
+      elements.selectedFileInfo.classList.add('hidden');
+
+      elements.originalImgView.src = '';
+      elements.originalImgView.classList.add('hidden');
+      elements.blendBaseImgView.src = '';
+      elements.originalPlaceholder.classList.remove('hidden');
+      elements.radiographResolution.textContent = '-- x --';
+
+      elements.runAnalysisBtn.disabled = true;
+      elements.btnSpinner.classList.add('hidden');
+      elements.btnText.textContent = 'Run Clinical Diagnostic & Trust Analysis';
+
+      resetInferenceResultsOnly();
+      hideNotification();
+    }
+
+    elements.newScanBtn.addEventListener('click', resetComplete);
+
+    /* ==========================================================================
+       REPORT EXPORT & CLINICAL PRINT PREVIEW
+       ========================================================================== */
+    elements.printReportBtn.addEventListener('click', () => {
+      window.print();
+    });
+
+    elements.downloadReportBtn.addEventListener('click', () => {
+      const d = AppState.lastPredictionData;
+      if (!d) return;
+
+      const dateStr = new Date().toISOString();
+      const p = d.primary_finding || {};
+      const rel = d.reliability || {};
+      const t = d.trust_supervisor || {};
+      const threshold = AppState.policyThresholds[AppState.currentPolicy];
+      const isTrusted = (t.trust_score || 0) >= threshold;
+
+      let report = `================================================================================\n`;
+      report += `MEDTRUST-XRAY CLINICAL AUDIT REPORT\n`;
+      report += `Clinical Decision-Support & Reliability Supervisor Telemetry\n`;
+      report += `================================================================================\n`;
+      report += `TIMESTAMP:               ${dateStr}\n`;
+      report += `SOURCE FILENAME:         ${d.filename || AppState.selectedFilename}\n`;
+      report += `POLICY ENFORCED:         ${AppState.currentPolicy.toUpperCase()} (Threshold: ${Math.round(threshold * 100)}%)\n`;
+      report += `BACKEND NODE:            ${BACKEND_BASE}\n\n`;
+
+      report += `[INDEPENDENT TRUST SUPERVISOR VERIFICATION]\n`;
+      report += `--------------------------------------------------------------------------------\n`;
+      report += `SUPERVISOR STATUS:       ${isTrusted ? 'VERIFIED RELIABLE' : 'DO NOT TRUST'}\n`;
+      report += `TRUST SCORE:             ${Math.round((t.trust_score || 0)*100)}% (Required: ${Math.round(threshold * 100)}%)\n`;
+      report += `CLINICAL RECOMMENDATION: ${isTrusted ? 'Verified reliable. Safe for clinical review.' : 'Unreliable inference detected. Manual radiologist re-read mandatory.'}\n\n`;
+
+      report += `[PRIMARY DIAGNOSTIC FINDING]\n`;
+      report += `--------------------------------------------------------------------------------\n`;
+      report += `DISEASE:                 ${p.disease || 'None'}\n`;
+      report += `NOMINAL PROBABILITY:     ${p.nominal_percentage || (p.nominal_probability !== undefined ? (p.nominal_probability * 100).toFixed(2) + '%' : '--')}\n\n`;
+
+      report += `[CROSS-ARCHITECTURAL MODEL BREAKDOWN]\n`;
+      report += `--------------------------------------------------------------------------------\n`;
+      if (d.model_breakdown && d.model_breakdown.primary_disease_scores) {
+        const pScores = d.model_breakdown.primary_disease_scores;
+        report += `DenseNet121:             ${(pScores.densenet * 100).toFixed(2)}%\n`;
+        report += `ResNet50:                ${(pScores.resnet * 100).toFixed(2)}%\n`;
+        report += `EfficientNet:            ${(pScores.efficientnet * 100).toFixed(2)}%\n`;
+        report += `Agreement Score:         ${((d.model_breakdown.agreement_score || 0) * 100).toFixed(2)}%\n\n`;
+      }
+
+      report += `[5-POINT ADVERSARIAL PERTURBATION STRESS TESTS]\n`;
+      report += `--------------------------------------------------------------------------------\n`;
+      if (d.perturbations) {
+        d.perturbations.forEach(pt => {
+          report += `${pt.name.padEnd(28)} Prob: ${(pt.disease_probability * 100).toFixed(2)}% | Delta: ${pt.delta_percentage}\n`;
+        });
+        report += `\n`;
+      }
+
+      report += `[COMPLETE THORACIC PATHOLOGY PROBABILITIES (14 CLASSES)]\n`;
+      report += `--------------------------------------------------------------------------------\n`;
+      if (d.pathologies) {
+        Object.entries(d.pathologies)
+          .sort((a, b) => b[1] - a[1])
+          .forEach(([k, v]) => {
+            const pad = k.padEnd(26, ' ');
+            report += `${pad} ${(v * 100).toFixed(2)}%\n`;
+          });
+      }
+      report += `\n`;
+
+      report += `[STAGE 2 — RELIABILITY SUPERVISOR METRICS]\n`;
+      report += `--------------------------------------------------------------------------------\n`;
+      report += `Image Quality Score:             ${(rel.image_quality_score !== undefined ? (rel.image_quality_score * 100).toFixed(2) + '%' : '--')}\n`;
+      report += `Laplacian Blur Metric:           ${rel.blur_metric ?? '--'}\n`;
+      report += `Noise Sigma Metric:              ${rel.noise_sigma ?? '--'}\n`;
+      report += `RMS Contrast Metric:             ${rel.contrast_metric ?? '--'}\n`;
+      report += `Perturbation Stability Score:    ${(rel.perturbation_stability_score !== undefined ? (rel.perturbation_stability_score * 100).toFixed(2) + '%' : '--')}\n`;
+      report += `Instability Standard Deviation:  ${rel.instability_std ?? '--'}\n`;
+      report += `Model Agreement Score:           ${(rel.model_agreement_score !== undefined ? (rel.model_agreement_score * 100).toFixed(2) + '%' : '--')}\n`;
+      report += `Grad-CAM Saliency Stability:     ${(rel.saliency_xai_stability !== undefined ? (rel.saliency_xai_stability * 100).toFixed(2) + '%' : '--')}\n\n`;
+
+      report += `================================================================================\n`;
+      report += `DISCLAIMER: MedTrust-XRay is an algorithmic decision-support tool. Findings are\n`;
+      report += `advisory and must be clinically evaluated and verified by a licensed radiologist.\n`;
+      report += `================================================================================\n`;
+
+      const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `MedTrust_Audit_${(d.filename || 'radiograph').replace(/\.[^/.]+$/, "")}_${Date.now()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    function formatBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+  </script>
+</body>
+</html>

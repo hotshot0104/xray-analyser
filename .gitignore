@@ -1,0 +1,29 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# OS & Temporary artifacts
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+scratch/
+.system_generated/
+
+# Redundant duplicate archives & duplicate weights folders
+*.zip
+*.tar.gz
+medtrust_trained_weights/
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
